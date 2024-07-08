@@ -17,6 +17,7 @@ fps = pygame.time.Clock()
 counter = 0
 centre = (width//2,height//2)
 show_axes = False
+paused = False
 
 lines = []
 circles = []
@@ -152,6 +153,8 @@ while True:
                 pygame.image.save(screen, f"images/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.png")
             if event.key == pygame.K_a:
                 show_axes = not show_axes
+            if event.key == pygame.K_p:
+                paused = not paused
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
             count += 1
@@ -168,6 +171,7 @@ while True:
                 "y":pygame.mouse.get_pos()[1],
             }
             circles.append(rad)
-    render()
+    if not paused:
+      render()
     pygame.display.update()
     fps.tick(60)

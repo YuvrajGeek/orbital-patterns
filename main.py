@@ -36,7 +36,7 @@ def lines_to_svg(lines, output_file):
     # Iterate over the list of lines and add them to the SVG
     for line in lines:
         start, end = line
-        dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(100, 100, 100, '%'), stroke_width=2))  # White line
+        dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(100, 100, 100, '%'), stroke_width=1))  # White line
 
     # Save the drawing to the file
     dwg.save()

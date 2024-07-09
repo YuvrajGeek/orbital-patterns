@@ -1,3 +1,4 @@
+import svgwrite
 import pygame, sys
 import math
 import os
@@ -16,8 +17,29 @@ fps = pygame.time.Clock()
 counter = 0
 centre = (width//2,height//2)
 show_axes = False
+paused = False
 
 lines = []
+circles = []
+
+def lines_to_svg(lines, output_file):
+    # Create an SVG drawing
+    dwg = svgwrite.Drawing(output_file, profile='full', size=(width, height))
+
+    # Add a black background
+    dwg.add(dwg.rect(insert=(0, 0), size=(width, height), fill=svgwrite.rgb(0, 0, 0, '%')))
+
+    # Add a circle
+    for radius in circles:
+        dwg.add(dwg.circle(center=centre, r=radius, fill='none', stroke=svgwrite.rgb(100, 100, 100, '%'), stroke_width=1))
+        
+    # Iterate over the list of lines and add them to the SVG
+    for line in lines:
+        start, end = line
+        dwg.add(dwg.line(start=start, end=end, stroke=svgwrite.rgb(100, 100, 100, '%'), stroke_width=1))  # White line
+
+    # Save the drawing to the file
+    dwg.save()
 
 def from_centre(x,y):
     return (centre[0]+x,centre[1]-y)
@@ -127,9 +149,12 @@ while True:
             if event.key == pygame.K_s:
                 if not os.path.isdir("images"):
                     os.makedirs("images")
+                lines_to_svg(lines, f"images/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.svg");
                 pygame.image.save(screen, f"images/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.png")
             if event.key == pygame.K_a:
                 show_axes = not show_axes
+            if event.key == pygame.K_p:
+                paused = not paused
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
             count += 1
@@ -145,6 +170,8 @@ while True:
                 "x":pygame.mouse.get_pos()[0],
                 "y":pygame.mouse.get_pos()[1],
             }
-    render()
+            circles.append(rad)
+    if not paused:
+      render()
     pygame.display.update()
     fps.tick(60)
